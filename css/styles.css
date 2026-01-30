@@ -850,13 +850,13 @@ img { max-width: 100%; display: block; }
 
 .leaders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px;
 }
 
 .leader-card {
     text-align: center;
-    padding: 32px 20px;
+    padding: 36px 24px;
     background: var(--cream);
     border: 1px solid rgba(26, 39, 68, 0.06);
     border-radius: var(--radius-lg);
@@ -869,8 +869,8 @@ img { max-width: 100%; display: block; }
 }
 
 .leader-avatar {
-    width: 80px;
-    height: 80px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     background: var(--cream-dark);
     margin: 0 auto 16px;
@@ -888,12 +888,12 @@ img { max-width: 100%; display: block; }
 }
 
 .leader-card h4 {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     margin-bottom: 4px;
 }
 
 .leader-card .role {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
     font-weight: 500;
 }

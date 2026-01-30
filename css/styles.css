@@ -1069,6 +1069,12 @@ img { max-width: 100%; display: block; }
     border-radius: var(--radius) var(--radius) 0 0;
     margin: -36px -28px 20px -28px;
     width: calc(100% + 56px);
+    filter: grayscale(100%);
+    transition: filter var(--transition);
+}
+
+.ministry-card:hover .ministry-card-img {
+    filter: grayscale(0%);
 }
 
 .ministry-card h3 {

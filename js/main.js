@@ -39,6 +39,33 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 revealElements.forEach(el => revealObserver.observe(el));
 
+// ═══════ PAGE TRANSITIONS ═══════
+const ptOverlay = document.createElement('div');
+ptOverlay.className = 'page-transition';
+document.body.appendChild(ptOverlay);
+
+// Fade out overlay to reveal page on load
+requestAnimationFrame(() => ptOverlay.classList.add('fade-out'));
+
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href ||
+        href.startsWith('#') ||
+        href.startsWith('http') ||
+        href.startsWith('mailto:') ||
+        href.startsWith('tel:') ||
+        link.target === '_blank') return;
+
+    e.preventDefault();
+    ptOverlay.classList.remove('fade-out');
+    ptOverlay.classList.add('fade-in');
+    ptOverlay.addEventListener('animationend', () => {
+        window.location.href = href;
+    }, { once: true });
+});
+
 // ═══════ FORM HANDLER ═══════
 function handleSubmit(e) {
     e.preventDefault();

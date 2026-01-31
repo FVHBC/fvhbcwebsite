@@ -1644,3 +1644,33 @@ img { max-width: 100%; display: block; }
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ══════════════════════════════════════
+   PAGE TRANSITIONS
+   ══════════════════════════════════════ */
+.page-transition {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--navy-deep);
+    pointer-events: none;
+}
+
+.page-transition.fade-out {
+    animation: ptFadeOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.page-transition.fade-in {
+    pointer-events: all;
+    animation: ptFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ptFadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes ptFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

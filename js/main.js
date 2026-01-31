@@ -27,7 +27,7 @@ window.addEventListener('scroll', () => {
 });
 
 // ═══════ SCROLL REVEAL ═══════
-const revealElements = document.querySelectorAll('.reveal');
+const revealElements = document.querySelectorAll('.reveal, .reveal-slide-left, .reveal-clip');
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -38,6 +38,24 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
 revealElements.forEach(el => revealObserver.observe(el));
+
+// ═══════ HERO PARALLAX ═══════
+const heroBg = document.querySelector('.hero-bg');
+if (heroBg && window.matchMedia('(min-width: 900px)').matches) {
+    const hero = document.querySelector('.hero');
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            const scrollY = window.scrollY;
+            if (scrollY <= hero.offsetHeight) {
+                heroBg.style.transform = 'translateY(' + scrollY * 0.4 + 'px)';
+            }
+            ticking = false;
+        });
+    });
+}
 
 // ═══════ PAGE TRANSITIONS ═══════
 const ptOverlay = document.createElement('div');

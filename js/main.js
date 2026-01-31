@@ -27,7 +27,7 @@ window.addEventListener('scroll', () => {
 });
 
 // ═══════ SCROLL REVEAL ═══════
-const revealElements = document.querySelectorAll('.reveal, .reveal-slide-left, .reveal-clip');
+const revealElements = document.querySelectorAll('.reveal, .reveal-slide-left, .reveal-clip, .hmong-border');
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -82,6 +82,47 @@ document.addEventListener('click', (e) => {
     ptOverlay.addEventListener('animationend', () => {
         window.location.href = href;
     }, { once: true });
+});
+
+// ═══════ BACK TO TOP ═══════
+const btt = document.createElement('button');
+btt.className = 'back-to-top';
+btt.setAttribute('aria-label', 'Back to top');
+btt.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+document.body.appendChild(btt);
+
+window.addEventListener('scroll', () => {
+    btt.classList.toggle('visible', window.scrollY > 400);
+});
+
+btt.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ═══════ DARK MODE TOGGLE ═══════
+const themeBtn = document.createElement('button');
+themeBtn.className = 'theme-toggle';
+themeBtn.setAttribute('aria-label', 'Toggle dark mode');
+themeBtn.innerHTML =
+    '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+    '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+const navInner = document.querySelector('.nav-inner');
+navInner.insertBefore(themeBtn, document.getElementById('hamburger'));
+
+if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+}
+
+themeBtn.addEventListener('click', () => {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    if (isDark) {
+        delete document.documentElement.dataset.theme;
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.documentElement.dataset.theme = 'dark';
+        localStorage.setItem('theme', 'dark');
+    }
 });
 
 // ═══════ FORM HANDLER ═══════

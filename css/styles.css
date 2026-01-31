@@ -353,9 +353,10 @@ img { max-width: 100%; display: block; }
     background: rgba(15, 26, 46, 0.5);
     z-index: 999;
     opacity: 0;
+    pointer-events: none;
     transition: opacity var(--transition);
 }
-.mobile-overlay.active { opacity: 1; }
+.mobile-overlay.active { opacity: 1; pointer-events: auto; }
 
 @media (max-width: 900px) {
     .nav-links {

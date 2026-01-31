@@ -205,6 +205,97 @@ const scrambleObserver = new IntersectionObserver((entries) => {
 
 scrambleEls.forEach(el => scrambleObserver.observe(el));
 
+// ═══════ EVENTS CALENDAR ═══════
+const calendarEl = document.getElementById('eventsCalendar');
+if (calendarEl) {
+    const calendarEvents = [
+        { date: '2026-03-21', title: 'HBNA North Region Annual Conference', desc: 'Worship, fellowship, and spiritual renewal' },
+    ];
+
+    // Add recurring Sunday events for the next 6 months
+    (function addSundays() {
+        const start = new Date();
+        start.setHours(0,0,0,0);
+        const end = new Date(start);
+        end.setMonth(end.getMonth() + 6);
+        const d = new Date(start);
+        d.setDate(d.getDate() + (7 - d.getDay()) % 7);
+        while (d <= end) {
+            const key = d.toISOString().slice(0, 10);
+            if (!calendarEvents.find(e => e.date === key)) {
+                calendarEvents.push({ date: key, title: 'Sunday Worship Service', desc: 'Bible Study 12 PM \u00b7 Worship 1 PM' });
+            }
+            d.setDate(d.getDate() + 7);
+        }
+    })();
+
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    function renderCalendar() {
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const today = new Date();
+
+        const monthLabel = calendarEl.querySelector('.calendar-month');
+        monthLabel.textContent = monthNames[currentMonth] + ' ' + currentYear;
+
+        const daysContainer = calendarEl.querySelector('.calendar-days');
+        const detailEl = calendarEl.querySelector('.calendar-event-detail');
+        detailEl.classList.remove('visible');
+        detailEl.innerHTML = '';
+        daysContainer.innerHTML = '';
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('span');
+            empty.className = 'calendar-day empty';
+            daysContainer.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            const dayEl = document.createElement('span');
+            dayEl.className = 'calendar-day';
+            dayEl.textContent = day;
+
+            if (today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === currentYear) {
+                dayEl.classList.add('today');
+            }
+
+            const dayEvents = calendarEvents.filter(e => e.date === dateStr);
+            if (dayEvents.length) {
+                dayEl.classList.add('has-event');
+                dayEl.addEventListener('click', () => {
+                    daysContainer.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+                    dayEl.classList.add('active');
+                    detailEl.innerHTML = dayEvents.map(ev =>
+                        '<div class="event-popup"><h4>' + ev.title + '</h4><p>' + ev.desc + '</p></div>'
+                    ).join('');
+                    detailEl.classList.add('visible');
+                });
+            }
+
+            daysContainer.appendChild(dayEl);
+        }
+    }
+
+    calendarEl.querySelector('.calendar-prev').addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
+    });
+
+    calendarEl.querySelector('.calendar-next').addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+    });
+
+    renderCalendar();
+}
+
 // ═══════ FORM HANDLER ═══════
 function handleSubmit(e) {
     e.preventDefault();

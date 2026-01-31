@@ -125,6 +125,86 @@ themeBtn.addEventListener('click', () => {
     }
 });
 
+// ═══════ TEXT SCRAMBLE ═══════
+const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*';
+
+function scrambleText(text) {
+    return text.replace(/[^\s]/g, () =>
+        scrambleChars[Math.floor(Math.random() * scrambleChars.length)]
+    );
+}
+
+function scrambleDecode(el) {
+    const parts = JSON.parse(el.dataset.scrambleParts);
+    const textParts = parts.filter(p => p.type === 'text');
+    const totalLen = textParts.reduce((s, p) => s + p.value.length, 0);
+    let frame = 0;
+    const totalFrames = totalLen + 15;
+
+    function step() {
+        let charIndex = 0;
+        const html = parts.map(p => {
+            if (p.type !== 'text') return p.value;
+            let result = '';
+            for (let i = 0; i < p.value.length; i++) {
+                if (p.value[i] === ' ' || p.value[i] === '\n') {
+                    result += p.value[i];
+                } else if (charIndex < frame - 8) {
+                    result += p.value[i];
+                } else {
+                    result += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+                }
+                charIndex++;
+            }
+            return result;
+        }).join('');
+        el.innerHTML = html;
+        frame++;
+        if (frame <= totalFrames) {
+            requestAnimationFrame(step);
+        } else {
+            el.innerHTML = parts.map(p => p.value).join('');
+        }
+    }
+    step();
+}
+
+const scrambleEls = document.querySelectorAll('.text-scramble');
+scrambleEls.forEach(el => {
+    // Split innerHTML into text segments and HTML tags
+    const raw = el.innerHTML;
+    const parts = [];
+    const tagRegex = /(<[^>]+>)/g;
+    let lastIndex = 0;
+    let match;
+    while ((match = tagRegex.exec(raw)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push({ type: 'text', value: raw.slice(lastIndex, match.index) });
+        }
+        parts.push({ type: 'tag', value: match[1] });
+        lastIndex = tagRegex.lastIndex;
+    }
+    if (lastIndex < raw.length) {
+        parts.push({ type: 'text', value: raw.slice(lastIndex) });
+    }
+    el.dataset.scrambleParts = JSON.stringify(parts);
+    // Show scrambled initially
+    el.innerHTML = parts.map(p =>
+        p.type === 'text' ? scrambleText(p.value) : p.value
+    ).join('');
+});
+
+const scrambleObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            scrambleDecode(entry.target);
+            scrambleObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.3 });
+
+scrambleEls.forEach(el => scrambleObserver.observe(el));
+
 // ═══════ FORM HANDLER ═══════
 function handleSubmit(e) {
     e.preventDefault();
